@@ -1,0 +1,97 @@
+MTOM Practical
+1. Create an ASP.NET Web Application (.NET Framework)  
+Create a new ASP.NET Web Forms project in Visual Studio.  
+- Open Visual Studio â†’ New Project â†’ Select ASP.NET Web Application (.NET Framework).  
+- Name it: `DownloadImageFromWS` â†’ Click OK â†’ Choose Empty + Web Forms â†’ Create.
+
+2. Add a Web Service (.asmx) File  
+Add a web service file to the project for handling file download logic.  
+- Right-click project â†’ Add â†’ New Item â†’ Select Web Service (ASMX) â†’ Name it: `DownloadImageWS.asmx`.
+
+3â€“5. Implement Web Service Logic  
+Write the backend logic to fetch file data as a byte array.  
+File: `DownloadImageWS.asmx.cs`  
+
+
+using System;
+using System.ComponentModel;
+using System.Web;
+using System.Web.Services;
+
+namespace DownloadImageFromWS
+{
+    [WebService(Namespace = "http://tempuri.org/")]
+    [WebServiceBinding(ConformsTo = WsiProfiles.BasicProfile1_1)]
+    [ToolboxItem(false)]
+    public class DownloadImageWS : System.Web.Services.WebService
+    {
+        [WebMethod]
+        public byte[] GetImageFile(string fileName)
+        {
+            string path = Server.MapPath("~/Images/") + fileName;
+            if (System.IO.File.Exists(path))
+            {
+                return System.IO.File.ReadAllBytes(path);
+            }
+            else
+            {
+                return new byte[] { 0 }; // Error flag
+            }
+        }
+    }
+}
+
+3. Add a Generic Handler (.ashx) File  
+
+public void ProcessRequest(HttpContext context)
+{
+  DownloadImageWS ws = new DownloadImageWS();
+  byte[] binImage = ws.GetImageFile(context.Request["fileName"]);
+if(binImage.Length == 1)
+{
+  //do nothing
+}
+else
+{
+  context.Response.ContentType = "image/jpeg";
+  context.Response.BinaryWrite(binImage);
+}
+}
+
+4. Add a Web Form (.aspx) File  
+Design the form by adding label,textbox,button, and image.
+Rename button as btn1 and textbox as txt1
+Double click on the button:
+Source code:
+<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="WebForm1.aspx.cs" Inherits="DownloadImageFromWS.WebForm1" %>
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <title>Download Image from Web Service</title>
+</head>
+<body>
+    <form id="form1" runat="server">
+        <div>
+            Enter name of img: 
+            <asp:TextBox ID="txt1" runat="server"></asp:TextBox>
+            <br /><br />
+            <asp:Button ID="Button1" runat="server" Text="Download Image" OnClick="Button1_Click" />
+            <br /><br />
+            <asp:Image ID="Image1" runat="server" Height="113px" Width="207px" />
+        </div>
+    </form>
+</body>
+</html>
+
+protected void btn1(object sender, EventArgs e)
+{
+  Image1.ImageUrl = "~/MyHandler.ashx?fileName=" + txt1.Text;
+  Response.Write("Downloading of image is done");
+}
+
+5. Right-click on project name on the right side and add an new folder, name it images
+download any 2 images and give name Image1 and download
+copy the imgs and paste in the images folder
+
+6. Right click on designed webform1 and run on brower
