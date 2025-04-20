@@ -1,0 +1,85 @@
+MultiplicationService.asmx.cs
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Services;
+
+namespace MultiplicationService
+{
+    /// <summary>
+    /// Summary description for MultiplicationService
+    /// </summary>
+    [WebService(Namespace = "http://tempuri.org/")]
+    [WebServiceBinding(ConformsTo = WsiProfiles.BasicProfile1_1)]
+    [System.ComponentModel.ToolboxItem(false)]
+    // To allow this Web Service to be called from script, using ASP.NET AJAX, uncomment the following line. 
+    // [System.Web.Script.Services.ScriptService]
+    public class MultiplicationService : System.Web.Services.WebService
+    {
+
+        [WebMethod]
+        public int Multiply(int a, int b)
+        {
+            return a * b;
+        }
+    }
+}
+
+MultiplyForm.aspx
+<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="MultiplyForm.aspx.cs" Inherits="MultiplicationService.MultiplyForm" %>
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <title>Multiplication SOAP Service</title>
+</head>
+<body>
+    <form id="form1" runat="server">
+        <div>
+            Enter First Number: 
+            <asp:TextBox ID="txtFirst" runat="server" />
+            <br />
+            Enter Second Number: 
+            <asp:TextBox ID="txtSecond" runat="server" />
+            <br />
+            <asp:Button ID="btnMultiply" runat="server" Text="Multiply" OnClick="btnMultiply_Click" />
+            <br /><br />
+            <asp:Label ID="lblResult" runat="server" Font-Bold="True" ForeColor="Blue" />
+        </div>
+    </form>
+</body>
+</html>
+
+MultiplyForm.aspx.cs
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+
+namespace MultiplicationService
+{
+    public partial class MultiplyForm : System.Web.UI.Page
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+
+        }
+        protected void btnMultiply_Click(object sender, EventArgs e)
+        {
+            if (int.TryParse(txtFirst.Text, out int num1) && int.TryParse(txtSecond.Text, out int num2))
+            {
+                // Call the web service directly (for same project)
+                MultiplicationService service = new MultiplicationService();
+                int result = service.Multiply(num1, num2);
+                lblResult.Text = $"Result: {result}";
+            }
+            else
+            {
+                lblResult.Text = "Please enter valid integers.";
+            }
+        }
+    }
+}
