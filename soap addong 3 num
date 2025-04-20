@@ -1,0 +1,90 @@
+AdditionService.asmx.cs
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Services;
+
+namespace AdditionService
+{
+    /// <summary>
+    /// Summary description for AdditionService
+    /// </summary>
+    [WebService(Namespace = "http://tempuri.org/")]
+    [WebServiceBinding(ConformsTo = WsiProfiles.BasicProfile1_1)]
+    [System.ComponentModel.ToolboxItem(false)]
+    // To allow this Web Service to be called from script, using ASP.NET AJAX, uncomment the following line. 
+    // [System.Web.Script.Services.ScriptService]
+    public class AdditionService : System.Web.Services.WebService
+    {
+
+        [WebMethod]
+        public int AddThreeNumbers(int a, int b, int c)
+        {
+            return a + b + c;
+        }
+    }
+}
+
+AdditionForm.aspx
+<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="AdditionForm.aspx.cs" Inherits="AdditionService.AdditionForm" %>
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <title>Addition of Three Numbers</title>
+</head>
+<body>
+    <form id="form1" runat="server">
+        <div>
+            Enter Number 1:
+            <asp:TextBox ID="txtNum1" runat="server" /><br /><br />
+
+            Enter Number 2:
+            <asp:TextBox ID="txtNum2" runat="server" /><br /><br />
+
+            Enter Number 3:
+            <asp:TextBox ID="txtNum3" runat="server" /><br /><br />
+
+            <asp:Button ID="btnAdd" runat="server" Text="Add Numbers" OnClick="btnAdd_Click" /><br /><br />
+
+            <asp:Label ID="lblResult" runat="server" Font-Bold="True" ForeColor="Blue" />
+        </div>
+    </form>
+</body>
+</html>
+
+AdditionForm.aspx.cs
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+
+namespace AdditionService
+{
+    public partial class AdditionForm : System.Web.UI.Page
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+
+        }
+        AdditionService service = new AdditionService();
+
+        protected void btnAdd_Click(object sender, EventArgs e)
+        {
+            if (int.TryParse(txtNum1.Text, out int a) &&
+                int.TryParse(txtNum2.Text, out int b) &&
+                int.TryParse(txtNum3.Text, out int c))
+            {
+                int result = service.AddThreeNumbers(a, b, c);
+                lblResult.Text = $"Result: {result}";
+            }
+            else
+            {
+                lblResult.Text = "Please enter valid integers.";
+            }
+        }
+    }
+}
