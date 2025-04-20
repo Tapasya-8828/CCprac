@@ -1,0 +1,9 @@
+STEPS:
+1) sudo apt update
+2) sudo apt install qemu-kvm
+3) sudo apt install libvirt-daemon-system libvirt-clients
+4) sudo adduser $USER kvm
+5) reboot
+6) sudo apt install virt-manager -y
+7) Download an Ubuntu iso file(Ubuntu16 - recommended)Open Virtual Machine Manager and install KVM Machine
+8) Wait to finish installation and then run any commands don't close machine by any chance.
