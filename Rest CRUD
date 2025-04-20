@@ -1,0 +1,28 @@
+Install nodejs
+cmd:
+npm install -g json-server
+
+Create a json file in notepad
+{
+  "example":
+  [
+    {
+      "key": "value"
+    }
+  ]
+}
+
+In cmd
+cd File Directory
+json-server --watch filename.json
+
+Go to Postman
+Go to + sign 
+GET method and copy paste the link
+POST method body > raw > json
+{
+      "key": "value"
+}
+PATCH method: one one key is updated (specify ID)
+PUT method: the whole file will be updated (specify ID)
+DELETE method
