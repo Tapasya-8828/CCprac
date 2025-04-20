@@ -1,0 +1,38 @@
+Steps:
+Ensure your VPS meets the following requirements before installation: 
+â— OS: Ubuntu 22.04 LTS (clean installation recommended) 
+â— RAM: Minimum 8GB recommended 
+â— CPU: 4 vCPUs recommended 
+â— Disk Space: At least 60GB, 80GB or 100GB (SSD preferred) 
+
+1) sudo apt update && sudo apt upgrade -y 
+2) sudo apt install -y git curl 
+3) sudo useradd -s /bin/bash -d /opt/stack -m stack 
+4) echo "stack ALL=(ALL) NOPASSWD: ALL" | sudo tee /etc/sudoers.d/stack 
+6) sudo chmod +x /opt/stack 
+7) sudo su - stack 
+8) git clone https://opendev.org/openstack/devstack.git 
+9) cd devstack 
+10) Create a local.conf file for custom settings: 
+nano local.conf 
+Add the following configuration: 
+[[local|localrc]] 
+ADMIN_PASSWORD=admin 
+DATABASE_PASSWORD=admin 
+RABBIT_PASSWORD=admin 
+SERVICE_PASSWORD=admin 
+HOST_IP=YOUR_SERVER_IP 
+Replace YOUR_SERVER_IP with your VPS IP (use ip a to check). 
+
+If you don't know your IP, you can set it dynamically: 
+HOST_IP=$(hostname -I | awk '{print $1}') 
+
+11) ./stack.sh or bash stack.sh
+ This process takes 20-40 minutes, depending on system performance. 
+
+Output:
+Once installed, access the OpenStack dashboard via browser: 
+http://YOUR_SERVER_IP/dashboard 
+Login Credentials: 
+â— Username: admin 
+â— Password: admin (set in local.conf)
