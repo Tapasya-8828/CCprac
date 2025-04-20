@@ -1,0 +1,104 @@
+CalculatorService.asmx.cs
+  using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Services;
+
+namespace CalculatorService
+{
+    /// <summary>
+    /// Summary description for CalculatorService
+    /// </summary>
+    [WebService(Namespace = "http://tempuri.org/")]
+    [WebServiceBinding(ConformsTo = WsiProfiles.BasicProfile1_1)]
+    [System.ComponentModel.ToolboxItem(false)]
+    // To allow this Web Service to be called from script, using ASP.NET AJAX, uncomment the following line. 
+    // [System.Web.Script.Services.ScriptService]
+    public class CalculatorService : System.Web.Services.WebService
+    {
+
+        [WebMethod]
+        public double Multiply(double a, double b)
+        {
+            return a * b;
+        }
+
+        [WebMethod]
+        public string Divide(double a, double b)
+        {
+            if (b == 0)
+                return "Cannot divide by zero.";
+            return (a / b).ToString();
+        }
+    }
+}
+
+CalculatorForm.aspx
+<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="CalculatorForm.aspx.cs" Inherits="CalculatorService.CalculatorForm" %>
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <title>SOAP Calculator App</title>
+</head>
+<body>
+    <form id="form1" runat="server">
+        <div>
+            Enter First Number:
+            <asp:TextBox ID="txtNum1" runat="server" /><br /><br />
+
+            Enter Second Number:
+            <asp:TextBox ID="txtNum2" runat="server" /><br /><br />
+
+            <asp:Button ID="btnMultiply" runat="server" Text="Multiply" OnClick="btnMultiply_Click" />
+            <asp:Button ID="btnDivide" runat="server" Text="Divide" OnClick="btnDivide_Click" /><br /><br />
+
+            <asp:Label ID="lblResult" runat="server" Font-Bold="True" ForeColor="Green" />
+        </div>
+    </form>
+</body>
+</html>
+
+CalculatorForm.aspx.cs
+using System;
+using System.Web.UI;
+
+namespace CalculatorService
+{
+    public partial class CalculatorForm : System.Web.UI.Page
+    {
+        // Create object of the referenced web service
+        CalculatorService service = new CalculatorService();
+
+        protected void Page_Load(object sender, EventArgs e)
+        {
+        }
+
+        protected void btnMultiply_Click(object sender, EventArgs e)
+        {
+            if (double.TryParse(txtNum1.Text, out double a) && double.TryParse(txtNum2.Text, out double b))
+            {
+                double result = service.Multiply(a, b);
+                lblResult.Text = $"Result (Multiplication): {result}";
+            }
+            else
+            {
+                lblResult.Text = "Please enter valid numbers.";
+            }
+        }
+
+        protected void btnDivide_Click(object sender, EventArgs e)
+        {
+            if (double.TryParse(txtNum1.Text, out double a) && double.TryParse(txtNum2.Text, out double b))
+            {
+                string result = service.Divide(a, b);
+                lblResult.Text = $"Result (Division): {result}";
+            }
+            else
+            {
+                lblResult.Text = "Please enter valid numbers.";
+            }
+        }
+    }
+}
