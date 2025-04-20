@@ -1,0 +1,135 @@
+FactorialService.asmx.cs (WebService)
+using System;
+using System.Web.Services;
+
+namespace FactorialWebService
+{
+    /// <summary>
+    /// Summary description for FactorialService
+    /// </summary>
+    [WebService(Namespace = "http://tempuri.org/")]
+    [WebServiceBinding(ConformsTo = WsiProfiles.BasicProfile1_1)]
+    [System.ComponentModel.ToolboxItem(false)]
+    public class FactorialService : System.Web.Services.WebService
+    {
+        [WebMethod]
+        public long GetFactorial(int number)
+        {
+            if (number < 0)
+                return -1; // Invalid input
+
+            long result = 1;
+            for (int i = 1; i <= number; i++)
+            {
+                result *= i;
+            }
+            return result;
+        }
+    }
+}
+
+WebForm1.aspx
+<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="WebForm1.aspx.cs" Inherits="FactorialService.WebForm1" %>
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <title>Factorial Calculator</title>
+</head>
+<body>
+    <form id="form1" runat="server">
+        <div>
+            Enter a number:
+            <asp:TextBox ID="txtNumber" runat="server" />
+            <asp:Button ID="btnCalculate" runat="server" Text="Calculate Factorial" OnClick="btnCalculate_Click" />
+            <br />
+            <asp:Label ID="lblResult" runat="server" />
+
+        </div>
+    </form>
+</body>
+</html>
+
+WebForm1.aspx.cs
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+
+namespace FactorialService
+{
+    public partial class WebForm1 : System.Web.UI.Page
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+
+        }
+        protected void btnCalculate_Click(object sender, EventArgs e)
+        {
+            string number = txtNumber.Text.Trim();
+
+            if (!int.TryParse(number, out int validNum) || validNum < 0)
+            {
+                lblResult.Text = "Please enter a valid non-negative integer.";
+                return;
+            }
+
+            // Create absolute URL for the handler
+            string handlerUrl = Request.Url.GetLeftPart(UriPartial.Authority) + ResolveUrl("~/FactorialHandler.ashx?number=" + HttpUtility.UrlEncode(number));
+
+            using (System.Net.WebClient client = new System.Net.WebClient())
+            {
+                string result = client.DownloadString(handlerUrl);
+                lblResult.Text = result;
+            }
+        }
+
+
+    }
+}
+
+FactorialHandler.ashx.cs
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+
+namespace FactorialService
+{
+    /// <summary>
+    /// Summary description for FactorialHandler
+    /// </summary>
+    public class FactorialHandler : IHttpHandler
+    {
+
+        public void ProcessRequest(HttpContext context)
+        {
+            context.Response.ContentType = "text/plain";
+
+            string numStr = context.Request.QueryString["number"];
+            if (int.TryParse(numStr, out int number) && number >= 0)
+            {
+                long result = 1;
+                for (int i = 1; i <= number; i++)
+                {
+                    result *= i;
+                }
+                context.Response.Write("Factorial of " + number + " is: " + result);
+            }
+            else
+            {
+                context.Response.Write("Invalid input! Please enter a non-negative integer.");
+            }
+        }
+
+        public bool IsReusable
+        {
+            get
+            {
+                return false;
+            }
+        }
+    }
+}
