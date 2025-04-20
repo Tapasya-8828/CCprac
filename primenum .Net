@@ -1,0 +1,92 @@
+PrimeCheckService.asmx.cs
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Services;
+
+namespace PrimeCheckService
+{
+    /// <summary>
+    /// Summary description for PrimeCheckService
+    /// </summary>
+    [WebService(Namespace = "http://tempuri.org/")]
+    [WebServiceBinding(ConformsTo = WsiProfiles.BasicProfile1_1)]
+    [System.ComponentModel.ToolboxItem(false)]
+    // To allow this Web Service to be called from script, using ASP.NET AJAX, uncomment the following line. 
+    // [System.Web.Script.Services.ScriptService]
+    public class PrimeCheckService : System.Web.Services.WebService
+    {
+
+        [WebMethod]
+        public bool IsPrime(int number)
+        {
+            if (number <= 1)
+                return false;
+
+            for (int i = 2; i <= Math.Sqrt(number); i++)
+            {
+                if (number % i == 0)
+                    return false;
+            }
+
+            return true;
+        }
+    }
+}
+
+PrimeChecker.aspx
+<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="PrimeChecker.aspx.cs" Inherits="PrimeCheckService.PrimeChecker" %>
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <title>Prime Number Checker</title>
+</head>
+<body>
+    <form id="form1" runat="server">
+        <div>
+            Enter a Number:
+            <asp:TextBox ID="txtNumber" runat="server" />
+            <asp:Button ID="btnCheck" runat="server" Text="Check Prime" OnClick="btnCheck_Click" />
+            <br /><br />
+            <asp:Label ID="lblResult" runat="server" ForeColor="Green" Font-Bold="True" />
+        </div>
+    </form>
+</body>
+</html>
+
+PrimeChecker.aspx.cs
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+
+namespace PrimeCheckService
+{
+    public partial class PrimeChecker : System.Web.UI.Page
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+
+        }
+        protected void btnCheck_Click(object sender, EventArgs e)
+        {
+            if (int.TryParse(txtNumber.Text, out int number))
+            {
+                PrimeCheckService service = new PrimeCheckService();
+                bool isPrime = service.IsPrime(number);
+
+                lblResult.Text = isPrime
+                    ? $"✔ {number} is a Prime Number."
+                    : $"✘ {number} is NOT a Prime Number.";
+            }
+            else
+            {
+                lblResult.Text = "Please enter a valid integer.";
+            }
+        }
+    }
+}
