@@ -1,0 +1,82 @@
+SquareService.asmx.cs
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Services;
+
+namespace SquareService
+{
+    /// <summary>
+    /// Summary description for SquareService
+    /// </summary>
+    [WebService(Namespace = "http://tempuri.org/")]
+    [WebServiceBinding(ConformsTo = WsiProfiles.BasicProfile1_1)]
+    [System.ComponentModel.ToolboxItem(false)]
+    // To allow this Web Service to be called from script, using ASP.NET AJAX, uncomment the following line. 
+    // [System.Web.Script.Services.ScriptService]
+    public class SquareService : System.Web.Services.WebService
+    {
+
+        [WebMethod]
+        public int SquareNumber(int number)
+        {
+            return number * number;
+        }
+    }
+}
+
+SquareForm.aspx
+<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="SquareForm.aspx.cs" Inherits="SquareService.SquareForm" %>
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <title>Square of a Number</title>
+</head>
+<body>
+    <form id="form1" runat="server">
+        <div>
+            Enter a Number:
+            <asp:TextBox ID="txtNumber" runat="server" /><br /><br />
+
+            <asp:Button ID="btnSquare" runat="server" Text="Find Square" OnClick="btnSquare_Click" /><br /><br />
+
+            <asp:Label ID="lblResult" runat="server" Font-Bold="True" ForeColor="DarkGreen" />
+        </div>
+    </form>
+</body>
+</html>
+
+SquareForm.aspx.cs
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+
+namespace SquareService
+{
+    public partial class SquareForm : System.Web.UI.Page
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+
+        }
+        SquareService service = new SquareService();
+        protected void btnSquare_Click(object sender, EventArgs e)
+        {
+            if (int.TryParse(txtNumber.Text, out int num))
+            {
+                int result = service.SquareNumber(num);
+                lblResult.Text = $"Square of {num} is {result}";
+            }
+            else
+            {
+                lblResult.Text = "Please enter a valid integer.";
+            }
+        }
+    }
+}
+    
