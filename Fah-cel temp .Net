@@ -1,0 +1,81 @@
+TemperatureService.asmx.cs
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Services;
+
+namespace TemperatureService
+{
+    /// <summary>
+    /// Summary description for TemperatureService
+    /// </summary>
+    [WebService(Namespace = "http://tempuri.org/")]
+    [WebServiceBinding(ConformsTo = WsiProfiles.BasicProfile1_1)]
+    [System.ComponentModel.ToolboxItem(false)]
+    // To allow this Web Service to be called from script, using ASP.NET AJAX, uncomment the following line. 
+    // [System.Web.Script.Services.ScriptService]
+    public class TemperatureService : System.Web.Services.WebService
+    {
+
+        [WebMethod]
+        public double ConvertFahrenheitToCelsius(double fahrenheit)
+        {
+            return (fahrenheit - 32) * 5.0 / 9.0;
+        }
+    }
+}
+
+TemperatureConverter.aspx
+<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="TemperatureConverter.aspx.cs" Inherits="TemperatureService.TemperatureConverter" %>
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <title>Temperature Converter</title>
+</head>
+<body>
+    <form id="form1" runat="server">
+        <div>
+            Enter Temperature in Fahrenheit:
+            <asp:TextBox ID="txtFahrenheit" runat="server" />
+            <asp:Button ID="btnConvert" runat="server" Text="Convert to Celsius" OnClick="btnConvert_Click" />
+            <br />
+            <asp:Label ID="lblResult" runat="server" ForeColor="Blue" Font-Bold="True" />
+        </div>
+    </form>
+</body>
+</html>
+
+TemperatureConverter.aspx.cs
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+
+namespace TemperatureService
+{
+    public partial class TemperatureConverter : System.Web.UI.Page
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+
+        }
+        protected void btnConvert_Click(object sender, EventArgs e)
+        {
+            if (double.TryParse(txtFahrenheit.Text, out double fahrenheit))
+            {
+                // Call the web service
+                TemperatureService service = new TemperatureService();
+                double celsius = service.ConvertFahrenheitToCelsius(fahrenheit);
+                lblResult.Text = $"Temperature in Celsius: {celsius:F2} °C";
+            }
+            else
+            {
+                lblResult.Text = "Please enter a valid numeric temperature.";
+            }
+        }
+    }
+}
